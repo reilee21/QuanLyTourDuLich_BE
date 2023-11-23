@@ -67,7 +67,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors("AllowReactApp");
-app.UseCors("AllowDeploy");
 
 app.UseCors("AllowDeploy");
 
