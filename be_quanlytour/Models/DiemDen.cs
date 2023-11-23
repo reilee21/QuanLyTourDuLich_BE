@@ -11,7 +11,7 @@ public partial class DiemDen
 
     public int IdDiaDiem { get; set; }
 
-    public virtual DiaDiem IdDiaDiemNavigation { get; set; } = null!;
+    public virtual DiaDiem? IdDiaDiemNavigation { get; set; } = null!;
 
     public virtual ICollection<LichTrinh> LichTrinhs { get; set; } = new List<LichTrinh>();
 }

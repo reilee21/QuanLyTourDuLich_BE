@@ -85,28 +85,30 @@ namespace be_quanlytour.Controllers
         [HttpPost]
         public async Task<ActionResult<TaiKhoan>> PostTaiKhoan(TaiKhoan taiKhoan)
         {
-          if (_context.TaiKhoans == null)
-          {
-              return Problem("Entity set 'QltourDuLichContext.TaiKhoans'  is null.");
-          }
-            _context.TaiKhoans.Add(taiKhoan);
+            if (_context.TaiKhoans == null)
+            {
+                return Problem("Entity set 'QltourDuLichContext.TaiKhoans'  is null.");
+            }
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (TaiKhoanExists(taiKhoan.IdTaiKhoan))
+                taiKhoan.IdTaiKhoan = GenerateAccID();
+                KhachHang khachHang = _context.KhachHangs.FirstOrDefault(x => x.MaKh == taiKhoan.MaKh);
+                if (khachHang == null)
                 {
-                    return Conflict();
+                    // Handle the case where MaKh doesn't exist in KhachHangs
+                    return NotFound($"KhachHang with MaKh '{taiKhoan.MaKh}' not found.");
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return CreatedAtAction("GetTaiKhoan", new { id = taiKhoan.IdTaiKhoan }, taiKhoan);
+                taiKhoan.MaKhNavigation = khachHang;
+
+                _context.TaiKhoans.Add(taiKhoan);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetTaiKhoans", new { id = taiKhoan.IdTaiKhoan }, taiKhoan);
+            }
+            catch (Exception ex)
+            {
+                return Problem($"Error creating TaiKhoan: {ex.Message}");
+            }
         }
 
         // DELETE: api/TaiKhoans/5
@@ -132,6 +134,66 @@ namespace be_quanlytour.Controllers
         private bool TaiKhoanExists(string id)
         {
             return (_context.TaiKhoans?.Any(e => e.IdTaiKhoan == id)).GetValueOrDefault();
+        }
+        private string GenerateAccID()
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+            Random random = new Random();
+            string id;
+            do
+            {
+                id = new string(Enumerable.Repeat(chars, 10 - 2)
+                  .Select(s => s[random.Next(s.Length)]).ToArray());
+            } while (TaiKhoanExists(id));
+
+            return id;
+        }
+        [HttpGet("CheckUsername/{username}")]
+        public async Task<ActionResult<bool>> CheckUsername(string username)
+        {
+            try
+            {
+                var existingUser = await _context.TaiKhoans.AnyAsync(x => x.Username == username);
+
+                return Ok(existingUser);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+        [HttpPut("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(string email, string newpass)
+        {           
+            try
+            {
+                var khachHang = await _context.KhachHangs.FirstOrDefaultAsync(kh => kh.Email == email);
+
+                if (khachHang == null)
+                {
+                    return NotFound("Customer not found");
+                }
+                
+                var taiKhoan = await _context.TaiKhoans.FirstOrDefaultAsync(tk => tk.MaKh == khachHang.MaKh);
+
+                if (taiKhoan == null)
+                {
+                    return NotFound("Account not found");
+                }
+
+                taiKhoan.Password = newpass;
+
+                await _context.SaveChangesAsync();
+
+                return Ok("Password updated successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }

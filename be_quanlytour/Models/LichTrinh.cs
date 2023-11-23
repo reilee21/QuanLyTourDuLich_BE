@@ -17,3 +17,14 @@ public partial class LichTrinh
 
     public virtual Tour MaTourNavigation { get; set; } = null!;
 }
+public partial class ILichTrinh
+{
+    public DateTime Ngay { get; set; }
+
+    public string MoTa { get; set; } = null!;
+
+    public string IdDiemDen { get; set; } = null!;
+
+    public string MaTour { get; set; } = null!;
+}
+

@@ -89,6 +89,14 @@ namespace be_quanlytour.Controllers
           {
               return Problem("Entity set 'QltourDuLichContext.DoiTacs'  is null.");
           }
+
+            int x = _context.DoiTacs.Count();
+            string newid = "DT";
+            if (x < 10)
+                newid += "0" + (x + 1);
+            else
+                newid += (x + 1);
+            doiTac.IdDoiTac = newid;
             _context.DoiTacs.Add(doiTac);
             try
             {
@@ -106,7 +114,7 @@ namespace be_quanlytour.Controllers
                 }
             }
 
-            return CreatedAtAction("GetDoiTac", new { id = doiTac.IdDoiTac }, doiTac);
+            return CreatedAtAction("GetDoiTac", new { id = newid }, doiTac);
         }
 
         // DELETE: api/DoiTacs/5

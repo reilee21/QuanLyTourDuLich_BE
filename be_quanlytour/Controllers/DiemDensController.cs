@@ -89,6 +89,7 @@ namespace be_quanlytour.Controllers
           {
               return Problem("Entity set 'QltourDuLichContext.DiemDens'  is null.");
           }
+            diemDen.IdDiemDen = TaoMaDD();
             _context.DiemDens.Add(diemDen);
             try
             {
@@ -132,6 +133,21 @@ namespace be_quanlytour.Controllers
         private bool DiemDenExists(string id)
         {
             return (_context.DiemDens?.Any(e => e.IdDiemDen == id)).GetValueOrDefault();
+        }
+        private string TaoMaDD()
+        {
+
+            Random random = new Random();
+            const string chars = "0123456789";
+
+            string randomString = new string(Enumerable.Repeat(chars, 10).Select(s => s[random.Next(s.Length)]).ToArray());
+
+            while (DiemDenExists(randomString))
+            {
+                randomString = new string(Enumerable.Repeat(chars, 10).Select(s => s[random.Next(s.Length)]).ToArray());
+            }
+
+            return randomString;
         }
     }
 }

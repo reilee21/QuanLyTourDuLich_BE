@@ -17,3 +17,11 @@ public partial class BookingTour
 
     public virtual Tour MaTourNavigation { get; set; } = null!;
 }
+public partial class IBookingTour
+{
+    public string MaTour { get; set; }
+
+    public string HanhKhaches { get; set; }
+    public string Booking { get; set; }
+
+}

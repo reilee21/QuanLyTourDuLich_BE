@@ -18,9 +18,7 @@ namespace be_quanlytour.Controllers
         public BookingsController(QltourDuLichContext context)
         {
             _context = context;
-        }
-
-        // GET: api/Bookings
+        } 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
@@ -31,35 +29,43 @@ namespace be_quanlytour.Controllers
             return await _context.Bookings.ToListAsync();
         }
 
-        // GET: api/Bookings/5
+     
         [HttpGet("{id}")]
         public async Task<ActionResult<Booking>> GetBooking(string id)
         {
-          if (_context.Bookings == null)
-          {
-              return NotFound();
-          }
-            var booking = await _context.Bookings.FindAsync(id);
-
-            if (booking == null)
+            if (_context.Bookings == null)
             {
                 return NotFound();
             }
 
-            return booking;
+            var bk = await _context.Bookings.Include(x => x.MaKhNavigation).Include(t => t.BookingTours).Include(t => t.BookingKs).FirstOrDefaultAsync(t => t.IdBooking ==id);
+
+            return bk;
+        }
+        [HttpGet("HanhKhach")]
+        public async Task<ActionResult<IEnumerable<HanhKhach>>> GetHanhKhach(int idBookingTour)
+        {
+            if (_context.HanhKhaches == null)
+            {
+                return NotFound();
+            }
+            var hks = await _context.HanhKhaches.Where(x => x.IdBookingTour == idBookingTour).ToListAsync();
+
+
+            return hks;
+
         }
 
-        // PUT: api/Bookings/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(string id, Booking booking)
+            [HttpPut("{id}")]
+        public async Task<IActionResult> PutBooking(string id, [FromForm] bool isPaid)
         {
-            if (id != booking.IdBooking)
+            var bk = await _context.Bookings.FirstOrDefaultAsync(t => t.IdBooking ==id);
+            if(bk == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(booking).State = EntityState.Modified;
+            bk.ThanhToan = isPaid;
 
             try
             {
@@ -80,54 +86,6 @@ namespace be_quanlytour.Controllers
             return NoContent();
         }
 
-        // POST: api/Bookings
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
-        {
-          if (_context.Bookings == null)
-          {
-              return Problem("Entity set 'QltourDuLichContext.Bookings'  is null.");
-          }
-            _context.Bookings.Add(booking);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (BookingExists(booking.IdBooking))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetBooking", new { id = booking.IdBooking }, booking);
-        }
-
-        // DELETE: api/Bookings/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBooking(string id)
-        {
-            if (_context.Bookings == null)
-            {
-                return NotFound();
-            }
-            var booking = await _context.Bookings.FindAsync(id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-
-            _context.Bookings.Remove(booking);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
 
         private bool BookingExists(string id)
         {

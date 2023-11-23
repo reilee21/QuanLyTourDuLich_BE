@@ -15,5 +15,5 @@ public partial class PhuongTien
 
     public virtual DoiTac? IdDoiTacNavigation { get; set; }
 
-    public virtual ICollection<Tour> MaTours { get; set; } = new List<Tour>();
+    public virtual ICollection<TourPhuongTien> TourPhuongTiens { get; set; } = new List<TourPhuongTien>();
 }

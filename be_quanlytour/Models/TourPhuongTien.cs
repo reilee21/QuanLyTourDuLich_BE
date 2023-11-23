@@ -3,13 +3,15 @@ using System.Collections.Generic;
 
 namespace be_quanlytour.Models;
 
-public partial class ChuyenBay
+public partial class TourPhuongTien
 {
-    public string MaChuyenBay { get; set; } = null!;
-
-    public DateTime NgayGioBay { get; set; }
+    public int Id { get; set; }
 
     public string MaTour { get; set; } = null!;
+
+    public int IdPhuongTien { get; set; }
+
+    public virtual PhuongTien IdPhuongTienNavigation { get; set; } = null!;
 
     public virtual Tour MaTourNavigation { get; set; } = null!;
 }

@@ -133,5 +133,9 @@ namespace be_quanlytour.Controllers
         {
             return (_context.LichTrinhs?.Any(e => e.IdDiemDen == id)).GetValueOrDefault();
         }
+
+    
+
+
     }
 }

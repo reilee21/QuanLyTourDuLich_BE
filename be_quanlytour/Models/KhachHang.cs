@@ -21,6 +21,8 @@ public partial class KhachHang
 
     public string MaKh { get; set; } = null!;
 
+    public int? DiemThuong { get; set; }
+
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     public virtual ICollection<DanhGia> DanhGia { get; set; } = new List<DanhGia>();
