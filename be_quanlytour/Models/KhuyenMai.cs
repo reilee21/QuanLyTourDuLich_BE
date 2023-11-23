@@ -11,5 +11,9 @@ public partial class KhuyenMai
 
     public double PhanTramKm { get; set; }
 
+    public DateTime ThoiGianBatDau { get; set; }
+
+    public DateTime ThoiGianKetThuc { get; set; }
+
     public virtual ICollection<TourKhuyenMai> TourKhuyenMais { get; set; } = new List<TourKhuyenMai>();
 }

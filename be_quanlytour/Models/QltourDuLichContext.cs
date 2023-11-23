@@ -23,8 +23,6 @@ public partial class QltourDuLichContext : DbContext
 
     public virtual DbSet<BookingTour> BookingTours { get; set; }
 
-    public virtual DbSet<ChuyenBay> ChuyenBays { get; set; }
-
     public virtual DbSet<DanhGia> DanhGia { get; set; }
 
     public virtual DbSet<DiaDiem> DiaDiems { get; set; }
@@ -59,17 +57,18 @@ public partial class QltourDuLichContext : DbContext
 
     public virtual DbSet<TourKhuyenMai> TourKhuyenMais { get; set; }
 
+    public virtual DbSet<TourPhuongTien> TourPhuongTiens { get; set; }
+
     public virtual DbSet<Voucher> Vouchers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BaiViet>(entity =>
         {
-            entity.HasKey(e => e.IdBaiViet).HasName("PK__BaiViet__42161C7A7714E8F4");
+            entity.HasKey(e => e.IdBaiViet).HasName("PK__BaiViet__42161C7A7AB6431A");
 
             entity.ToTable("BaiViet");
 
-            entity.Property(e => e.IdBaiViet).ValueGeneratedNever();
             entity.Property(e => e.AnhBia).IsUnicode(false);
             entity.Property(e => e.MaNv)
                 .HasMaxLength(10)
@@ -82,12 +81,12 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.MaNvNavigation).WithMany(p => p.BaiViets)
                 .HasForeignKey(d => d.MaNv)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__BaiViet__MaNV__787EE5A0");
+                .HasConstraintName("FK__BaiViet__MaNV__76969D2E");
         });
 
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasKey(e => e.IdBooking).HasName("PK__Booking__7271F576131428D5");
+            entity.HasKey(e => e.IdBooking).HasName("PK__Booking__7271F57675365868");
 
             entity.ToTable("Booking");
 
@@ -113,27 +112,24 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.MaKhNavigation).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.MaKh)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Booking__MaKH__693CA210");
+                .HasConstraintName("FK__Booking__MaKH__68487DD7");
 
             entity.HasOne(d => d.MaNvNavigation).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.MaNv)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Booking__MaNV__68487DD7");
+                .HasConstraintName("FK__Booking__MaNV__6754599E");
 
             entity.HasOne(d => d.MaVoucherNavigation).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.MaVoucher)
-                .HasConstraintName("FK__Booking__MaVouch__6A30C649");
+                .HasConstraintName("FK__Booking__MaVouch__693CA210");
         });
 
         modelBuilder.Entity<BookingK>(entity =>
         {
-            entity.HasKey(e => e.IdBookingKs).HasName("PK__BookingK__7158ED4C8B97D157");
+            entity.HasKey(e => e.IdBookingKs).HasName("PK__BookingK__7158ED4C299614AD");
 
             entity.ToTable("BookingKS");
 
-            entity.Property(e => e.IdBookingKs)
-                .ValueGeneratedNever()
-                .HasColumnName("IdBookingKS");
+            entity.Property(e => e.IdBookingKs).HasColumnName("IdBookingKS");
             entity.Property(e => e.IdBooking)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -144,21 +140,20 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.IdBookingNavigation).WithMany(p => p.BookingKs)
                 .HasForeignKey(d => d.IdBooking)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__BookingKS__IdBoo__6E01572D");
+                .HasConstraintName("FK__BookingKS__IdBoo__6D0D32F4");
 
             entity.HasOne(d => d.IdLoaiPhongNavigation).WithMany(p => p.BookingKs)
                 .HasForeignKey(d => d.IdLoaiPhong)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__BookingKS__IdLoa__6D0D32F4");
+                .HasConstraintName("FK__BookingKS__IdLoa__6C190EBB");
         });
 
         modelBuilder.Entity<BookingTour>(entity =>
         {
-            entity.HasKey(e => e.IdBookingTour).HasName("PK__BookingT__1AE13BB41DFD4A43");
+            entity.HasKey(e => e.IdBookingTour).HasName("PK__BookingT__1AE13BB43C982AB8");
 
             entity.ToTable("BookingTour");
 
-            entity.Property(e => e.IdBookingTour).ValueGeneratedNever();
             entity.Property(e => e.IdBooking)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -171,40 +166,18 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.IdBookingNavigation).WithMany(p => p.BookingTours)
                 .HasForeignKey(d => d.IdBooking)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__BookingTo__IdBoo__6C190EBB");
+                .HasConstraintName("FK__BookingTo__IdBoo__6B24EA82");
 
             entity.HasOne(d => d.MaTourNavigation).WithMany(p => p.BookingTours)
                 .HasForeignKey(d => d.MaTour)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__BookingTo__MaTou__6B24EA82");
-        });
-
-        modelBuilder.Entity<ChuyenBay>(entity =>
-        {
-            entity.HasKey(e => e.MaChuyenBay).HasName("PK__ChuyenBa__9B5036A3F855ACDA");
-
-            entity.ToTable("ChuyenBay");
-
-            entity.Property(e => e.MaChuyenBay)
-                .HasMaxLength(10)
-                .IsUnicode(false);
-            entity.Property(e => e.MaTour)
-                .HasMaxLength(15)
-                .IsUnicode(false)
-                .IsFixedLength();
-            entity.Property(e => e.NgayGioBay).HasColumnType("datetime");
-
-            entity.HasOne(d => d.MaTourNavigation).WithMany(p => p.ChuyenBays)
-                .HasForeignKey(d => d.MaTour)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ChuyenBay__MaTou__6FE99F9F");
+                .HasConstraintName("FK__BookingTo__MaTou__6A30C649");
         });
 
         modelBuilder.Entity<DanhGia>(entity =>
         {
-            entity.HasKey(e => e.MaDanhGia).HasName("PK__DanhGia__AA9515BF8889FEC7");
+            entity.HasKey(e => e.MaDanhGia).HasName("PK__DanhGia__AA9515BFF1C2DDA8");
 
-            entity.Property(e => e.MaDanhGia).ValueGeneratedNever();
             entity.Property(e => e.MaKh)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -219,27 +192,26 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.MaKhNavigation).WithMany(p => p.DanhGia)
                 .HasForeignKey(d => d.MaKh)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__DanhGia__MaKH__7B5B524B");
+                .HasConstraintName("FK__DanhGia__MaKH__797309D9");
 
             entity.HasOne(d => d.MaTourNavigation).WithMany(p => p.DanhGia)
                 .HasForeignKey(d => d.MaTour)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__DanhGia__MaTour__7A672E12");
+                .HasConstraintName("FK__DanhGia__MaTour__787EE5A0");
         });
 
         modelBuilder.Entity<DiaDiem>(entity =>
         {
-            entity.HasKey(e => e.IdDiaDiem).HasName("PK__DiaDiem__5EA8273A1E340C91");
+            entity.HasKey(e => e.IdDiaDiem).HasName("PK__DiaDiem__5EA8273AF32D58EB");
 
             entity.ToTable("DiaDiem");
 
-            entity.Property(e => e.IdDiaDiem).ValueGeneratedNever();
             entity.Property(e => e.TenDiaDiem).HasMaxLength(50);
         });
 
         modelBuilder.Entity<DiemDen>(entity =>
         {
-            entity.HasKey(e => e.IdDiemDen).HasName("PK__DiemDen__D267BA44A8C3E4F6");
+            entity.HasKey(e => e.IdDiemDen).HasName("PK__DiemDen__D267BA447F2E5E3C");
 
             entity.ToTable("DiemDen");
 
@@ -251,12 +223,12 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.IdDiaDiemNavigation).WithMany(p => p.DiemDens)
                 .HasForeignKey(d => d.IdDiaDiem)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__DiemDen__IdDiaDi__656C112C");
+                .HasConstraintName("FK__DiemDen__IdDiaDi__6477ECF3");
         });
 
         modelBuilder.Entity<DoiTac>(entity =>
         {
-            entity.HasKey(e => e.IdDoiTac).HasName("PK__DoiTac__F260D4200BC71960");
+            entity.HasKey(e => e.IdDoiTac).HasName("PK__DoiTac__F260D42074147D2B");
 
             entity.ToTable("DoiTac");
 
@@ -276,23 +248,22 @@ public partial class QltourDuLichContext : DbContext
 
         modelBuilder.Entity<HanhKhach>(entity =>
         {
-            entity.HasKey(e => e.IdHanhKhach).HasName("PK__HanhKhac__A798BF08A1BF5C78");
+            entity.HasKey(e => e.IdHanhKhach).HasName("PK__HanhKhac__A798BF08127886A1");
 
             entity.ToTable("HanhKhach");
 
-            entity.Property(e => e.IdHanhKhach).ValueGeneratedNever();
             entity.Property(e => e.LoaiHanhKhach).HasMaxLength(30);
             entity.Property(e => e.TenHanhKhach).HasMaxLength(50);
 
             entity.HasOne(d => d.IdBookingTourNavigation).WithMany(p => p.HanhKhaches)
                 .HasForeignKey(d => d.IdBookingTour)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__HanhKhach__IdBoo__75A278F5");
+                .HasConstraintName("FK__HanhKhach__IdBoo__73BA3083");
         });
 
         modelBuilder.Entity<KhachHang>(entity =>
         {
-            entity.HasKey(e => e.MaKh).HasName("PK__KhachHan__2725CF1EB861AFC9");
+            entity.HasKey(e => e.MaKh).HasName("PK__KhachHan__2725CF1E332F3BE7");
 
             entity.ToTable("KhachHang");
 
@@ -324,7 +295,7 @@ public partial class QltourDuLichContext : DbContext
 
         modelBuilder.Entity<KhachSan>(entity =>
         {
-            entity.HasKey(e => e.IdKhachSan).HasName("PK__KhachSan__0F22D8A1796129B9");
+            entity.HasKey(e => e.IdKhachSan).HasName("PK__KhachSan__0F22D8A12E4364AD");
 
             entity.ToTable("KhachSan");
 
@@ -340,27 +311,27 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.IdDoiTacNavigation).WithMany(p => p.KhachSans)
                 .HasForeignKey(d => d.IdDoiTac)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__KhachSan__IdDoiT__66603565");
+                .HasConstraintName("FK__KhachSan__IdDoiT__656C112C");
         });
 
         modelBuilder.Entity<KhuyenMai>(entity =>
         {
-            entity.HasKey(e => e.MaKm).HasName("PK__KhuyenMa__2725CF1550D1761E");
+            entity.HasKey(e => e.MaKm).HasName("PK__KhuyenMa__2725CF15225AEBEF");
 
             entity.ToTable("KhuyenMai");
 
-            entity.Property(e => e.MaKm)
-                .ValueGeneratedNever()
-                .HasColumnName("MaKM");
+            entity.Property(e => e.MaKm).HasColumnName("MaKM");
             entity.Property(e => e.PhanTramKm).HasColumnName("PhanTramKM");
             entity.Property(e => e.TenKm)
                 .HasMaxLength(100)
                 .HasColumnName("TenKM");
+            entity.Property(e => e.ThoiGianBatDau).HasColumnType("datetime");
+            entity.Property(e => e.ThoiGianKetThuc).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<LichTrinh>(entity =>
         {
-            entity.HasKey(e => new { e.IdDiemDen, e.MaTour }).HasName("PK__LichTrin__2682EF39B5FFC2D5");
+            entity.HasKey(e => new { e.IdDiemDen, e.MaTour }).HasName("PK__LichTrin__2682EF395134BFE1");
 
             entity.ToTable("LichTrinh");
 
@@ -376,34 +347,37 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.IdDiemDenNavigation).WithMany(p => p.LichTrinhs)
                 .HasForeignKey(d => d.IdDiemDen)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__LichTrinh__IdDie__72C60C4A");
+                .HasConstraintName("FK__LichTrinh__IdDie__70DDC3D8");
 
             entity.HasOne(d => d.MaTourNavigation).WithMany(p => p.LichTrinhs)
                 .HasForeignKey(d => d.MaTour)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__LichTrinh__MaTou__73BA3083");
+                .HasConstraintName("FK__LichTrinh__MaTou__71D1E811");
         });
 
         modelBuilder.Entity<LoaiPhong>(entity =>
         {
-            entity.HasKey(e => e.IdLoaiPhong).HasName("PK__LoaiPhon__E8A0463AEA2A749A");
+            entity.HasKey(e => e.IdLoaiPhong).HasName("PK__LoaiPhon__E8A0463AAD4E404D");
 
             entity.ToTable("LoaiPhong");
 
-            entity.Property(e => e.IdLoaiPhong).ValueGeneratedNever();
             entity.Property(e => e.IdKhachSan)
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.TenLoai).HasMaxLength(100);
+
+            entity.HasOne(d => d.IdKhachSanNavigation).WithMany(p => p.LoaiPhongs)
+                .HasForeignKey(d => d.IdKhachSan)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__LoaiPhong__IdKha__619B8048");
         });
 
         modelBuilder.Entity<MucHoiDap>(entity =>
         {
-            entity.HasKey(e => e.IdHoiDap).HasName("PK__MucHoiDa__85D875B6003167BE");
+            entity.HasKey(e => e.IdHoiDap).HasName("PK__MucHoiDa__85D875B6BE8D4FED");
 
             entity.ToTable("MucHoiDap");
 
-            entity.Property(e => e.IdHoiDap).ValueGeneratedNever();
             entity.Property(e => e.MaNv)
                 .HasMaxLength(10)
                 .IsUnicode(false)
@@ -413,12 +387,12 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.MaNvNavigation).WithMany(p => p.MucHoiDaps)
                 .HasForeignKey(d => d.MaNv)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__MucHoiDap__MaNV__797309D9");
+                .HasConstraintName("FK__MucHoiDap__MaNV__778AC167");
         });
 
         modelBuilder.Entity<NhanVien>(entity =>
         {
-            entity.HasKey(e => e.MaNv).HasName("PK__NhanVien__2725D70A0CC4555D");
+            entity.HasKey(e => e.MaNv).HasName("PK__NhanVien__2725D70A9E4E22D8");
 
             entity.ToTable("NhanVien");
 
@@ -446,11 +420,10 @@ public partial class QltourDuLichContext : DbContext
 
         modelBuilder.Entity<PhuongTien>(entity =>
         {
-            entity.HasKey(e => e.IdPhuongTien).HasName("PK__PhuongTi__3262AF13BF807BFA");
+            entity.HasKey(e => e.IdPhuongTien).HasName("PK__PhuongTi__3262AF135981B2F4");
 
             entity.ToTable("PhuongTien");
 
-            entity.Property(e => e.IdPhuongTien).ValueGeneratedNever();
             entity.Property(e => e.IdDoiTac)
                 .HasMaxLength(10)
                 .IsUnicode(false);
@@ -459,12 +432,12 @@ public partial class QltourDuLichContext : DbContext
 
             entity.HasOne(d => d.IdDoiTacNavigation).WithMany(p => p.PhuongTiens)
                 .HasForeignKey(d => d.IdDoiTac)
-                .HasConstraintName("FK__PhuongTie__IdDoi__74AE54BC");
+                .HasConstraintName("FK__PhuongTie__IdDoi__72C60C4A");
         });
 
         modelBuilder.Entity<TaiKhoan>(entity =>
         {
-            entity.HasKey(e => e.IdTaiKhoan).HasName("PK__TaiKhoan__9A53D3DD9C1E21B2");
+            entity.HasKey(e => e.IdTaiKhoan).HasName("PK__TaiKhoan__9A53D3DD2B3EC305");
 
             entity.ToTable("TaiKhoan");
 
@@ -487,12 +460,12 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.MaKhNavigation).WithMany(p => p.TaiKhoans)
                 .HasForeignKey(d => d.MaKh)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TaiKhoan__MaKH__6383C8BA");
+                .HasConstraintName("FK__TaiKhoan__MaKH__628FA481");
         });
 
         modelBuilder.Entity<TaiKhoanNv>(entity =>
         {
-            entity.HasKey(e => e.IdTaiKhoan).HasName("PK__TaiKhoan__9A53D3DD013869F9");
+            entity.HasKey(e => e.IdTaiKhoan).HasName("PK__TaiKhoan__9A53D3DD6256B4D0");
 
             entity.ToTable("TaiKhoanNV");
 
@@ -515,12 +488,12 @@ public partial class QltourDuLichContext : DbContext
             entity.HasOne(d => d.MaNvNavigation).WithMany(p => p.TaiKhoanNvs)
                 .HasForeignKey(d => d.MaNv)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TaiKhoanNV__MaNV__6477ECF3");
+                .HasConstraintName("FK__TaiKhoanNV__MaNV__6383C8BA");
         });
 
         modelBuilder.Entity<Tour>(entity =>
         {
-            entity.HasKey(e => e.MaTour).HasName("PK__Tour__4E5557DEA0F7D896");
+            entity.HasKey(e => e.MaTour).HasName("PK__Tour__4E5557DEA87B959F");
 
             entity.ToTable("Tour");
 
@@ -528,61 +501,65 @@ public partial class QltourDuLichContext : DbContext
                 .HasMaxLength(15)
                 .IsUnicode(false)
                 .IsFixedLength();
+            entity.Property(e => e.AnhBia)
+                .HasMaxLength(300)
+                .IsUnicode(false);
             entity.Property(e => e.GioTapTrung).HasColumnType("datetime");
             entity.Property(e => e.NgayKhoiHanh).HasColumnType("date");
             entity.Property(e => e.NoiKhoiHanh).HasMaxLength(100);
             entity.Property(e => e.TenTour).HasMaxLength(100);
-
-            entity.HasMany(d => d.IdPhuongTiens).WithMany(p => p.MaTours)
-                .UsingEntity<Dictionary<string, object>>(
-                    "TourPhuongTien",
-                    r => r.HasOne<PhuongTien>().WithMany()
-                        .HasForeignKey("IdPhuongTien")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__Tour_Phuo__IdPhu__778AC167"),
-                    l => l.HasOne<Tour>().WithMany()
-                        .HasForeignKey("MaTour")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__Tour_Phuo__MaTou__76969D2E"),
-                    j =>
-                    {
-                        j.HasKey("MaTour", "IdPhuongTien").HasName("PK__Tour_Phu__6D737D2F466C1671");
-                        j.ToTable("Tour_PhuongTien");
-                        j.IndexerProperty<string>("MaTour")
-                            .HasMaxLength(15)
-                            .IsUnicode(false)
-                            .IsFixedLength();
-                    });
         });
 
         modelBuilder.Entity<TourKhuyenMai>(entity =>
         {
-            entity.HasKey(e => new { e.MaKm, e.MaTour }).HasName("PK__Tour_Khu__D3C09A689F629174");
+            entity.HasKey(e => e.Id).HasName("PK__Tour_Khu__3214EC27F8582461");
 
             entity.ToTable("Tour_KhuyenMai");
 
+            entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.MaKm).HasColumnName("MaKM");
             entity.Property(e => e.MaTour)
                 .HasMaxLength(15)
                 .IsUnicode(false)
                 .IsFixedLength();
-            entity.Property(e => e.ThoiGianBatDau).HasColumnType("datetime");
-            entity.Property(e => e.ThoiGianKetThuc).HasColumnType("datetime");
 
             entity.HasOne(d => d.MaKmNavigation).WithMany(p => p.TourKhuyenMais)
                 .HasForeignKey(d => d.MaKm)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Tour_Khuye__MaKM__70DDC3D8");
+                .HasConstraintName("FK__Tour_Khuye__MaKM__6EF57B66");
 
             entity.HasOne(d => d.MaTourNavigation).WithMany(p => p.TourKhuyenMais)
                 .HasForeignKey(d => d.MaTour)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Tour_Khuy__MaTou__71D1E811");
+                .HasConstraintName("FK__Tour_Khuy__MaTou__6FE99F9F");
+        });
+
+        modelBuilder.Entity<TourPhuongTien>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Tour_Phu__3214EC27EFBE1C67");
+
+            entity.ToTable("Tour_PhuongTien");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.MaTour)
+                .HasMaxLength(15)
+                .IsUnicode(false)
+                .IsFixedLength();
+
+            entity.HasOne(d => d.IdPhuongTienNavigation).WithMany(p => p.TourPhuongTiens)
+                .HasForeignKey(d => d.IdPhuongTien)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Phuo__IdPhu__75A278F5");
+
+            entity.HasOne(d => d.MaTourNavigation).WithMany(p => p.TourPhuongTiens)
+                .HasForeignKey(d => d.MaTour)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Phuo__MaTou__74AE54BC");
         });
 
         modelBuilder.Entity<Voucher>(entity =>
         {
-            entity.HasKey(e => e.MaVoucher).HasName("PK__Voucher__0AAC5B11E8219995");
+            entity.HasKey(e => e.MaVoucher).HasName("PK__Voucher__0AAC5B116412EB11");
 
             entity.ToTable("Voucher");
 
@@ -598,11 +575,12 @@ public partial class QltourDuLichContext : DbContext
 
             entity.HasOne(d => d.IdDoiTacNavigation).WithMany(p => p.Vouchers)
                 .HasForeignKey(d => d.IdDoiTac)
-                .HasConstraintName("FK__Voucher__IdDoiTa__6754599E");
+                .HasConstraintName("FK__Voucher__IdDoiTa__66603565");
         });
 
         OnModelCreatingPartial(modelBuilder);
     }
+
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

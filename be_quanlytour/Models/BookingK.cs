@@ -19,3 +19,14 @@ public partial class BookingK
 
     public virtual LoaiPhong IdLoaiPhongNavigation { get; set; } = null!;
 }
+public partial class IBookingK
+{
+    public DateTime NgayNhan { get; set; }
+
+    public DateTime NgayTra { get; set; }
+
+    public string Phongs { get; set; }
+
+    public string Booking { get; set; }
+
+}

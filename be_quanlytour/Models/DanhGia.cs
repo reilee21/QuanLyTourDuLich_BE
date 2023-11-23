@@ -9,7 +9,7 @@ public partial class DanhGia
 
     public DateTime ThoiDiem { get; set; }
 
-    public string NoiDung { get; set; }
+    public string NoiDung { get; set; } = null!;
 
     public string MaTour { get; set; } = null!;
 

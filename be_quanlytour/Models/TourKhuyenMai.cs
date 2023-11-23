@@ -5,9 +5,7 @@ namespace be_quanlytour.Models;
 
 public partial class TourKhuyenMai
 {
-    public DateTime ThoiGianBatDau { get; set; }
-
-    public DateTime ThoiGianKetThuc { get; set; }
+    public int Id { get; set; }
 
     public int MaKm { get; set; }
 

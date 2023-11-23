@@ -46,12 +46,16 @@ namespace be_quanlytour.Controllers
                     throw new SecurityTokenException("Mã thông báo đã hết hạn");
                 }
 
-                // Lấy thông tin từ mã thông báo cũ
                 var username = principal.Identity.Name;
                 var userRole = principal.Claims.First(claim => claim.Type == ClaimTypes.Role).Value;
-
-                // Tạo mã thông báo mới dựa trên thông tin từ mã thông báo cũ
-                var newToken = GenerateJWTToken(username, userRole);
+                var userMail = principal.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
+                var userIdClaim = principal.Claims.FirstOrDefault(claim => claim.Type == "id");
+                string userId = "";
+                if (userIdClaim != null)
+                {
+                    userId = userIdClaim.Value;
+                }
+                var newToken = GenerateJWTToken(username, userRole,userMail, userId);
 
                 return Ok(new { Token = newToken });
             }
@@ -66,32 +70,25 @@ namespace be_quanlytour.Controllers
         [HttpPost]
         public IActionResult DangNhap(string username, string password)
         {
-            // Truy vấn dữ liệu từ hai bảng TaiKhoanNv và TaiKhoan
             var nhanVien = _context.TaiKhoanNvs.SingleOrDefault(t => t.Username == username && t.Password ==password);
             var khachHang = _context.TaiKhoans.SingleOrDefault(t => t.Username == username && t.Password == password);
             
             if (nhanVien != null)
             {
-                // Đăng nhập thành công cho tài khoản Nhân Viên
-                // Tạo và trả về mã thông báo (JWT) cho Nhân Viên
                 var infonv = _context.NhanViens.SingleOrDefault(t => t.MaNv == nhanVien.MaNv);
-                var token = GenerateJWTToken(username,infonv.ChucVu);
-                return Ok(new { Token = token,
-                                Alert = "success nhân viên"+ infonv.ChucVu
-                });
+                var token = GenerateJWTToken(username,infonv.ChucVu,infonv.Email,infonv.MaNv);
+                return Ok(new { Token = token});
             }
             else if (khachHang != null)
             {
-                // Đăng nhập thành công cho tài khoản Khách Hàng
-                // Tạo và trả về mã thông báo (JWT) cho Khách Hàng
-                var token = GenerateJWTToken(username, "client");
-                return Ok(new { Token = token, Alert = "success khách" });
+                var infoKH = _context.KhachHangs.SingleOrDefault(t => t.MaKh == khachHang.MaKh);
+                var token = GenerateJWTToken(username, "client", infoKH.Email, infoKH.MaKh) ;
+                return Ok(new { Token = token });
             }
 
-            // Đăng nhập thất bại
             return Unauthorized();
         }
-        private string GenerateJWTToken(string username,string role)
+        private string GenerateJWTToken(string username,string role,string email,string id)
         {
             var jwttoken = new JwtSecurityTokenHandler();
             var skbyte = Encoding.UTF8.GetBytes("zzzzhdz02x1ta1urertv01vwxchjb4h1");
@@ -101,6 +98,8 @@ namespace be_quanlytour.Controllers
                 {
                     new Claim(ClaimTypes.Name, username),
                     new Claim(ClaimTypes.Role,role),
+                    new Claim(ClaimTypes.Email, email), // Add email as a claim
+                     new Claim("id", id.ToString()),
                     new Claim("TokenId",Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),

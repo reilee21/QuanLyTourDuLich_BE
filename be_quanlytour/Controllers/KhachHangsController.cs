@@ -24,10 +24,10 @@ namespace be_quanlytour.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<KhachHang>>> GetKhachHangs()
         {
-          if (_context.KhachHangs == null)
-          {
-              return NotFound();
-          }
+            if (_context.KhachHangs == null)
+            {
+                return NotFound();
+            }
             return await _context.KhachHangs.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace be_quanlytour.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<KhachHang>> GetKhachHang(string id)
         {
-          if (_context.KhachHangs == null)
-          {
-              return NotFound();
-          }
+            if (_context.KhachHangs == null)
+            {
+                return NotFound();
+            }
             var khachHang = await _context.KhachHangs.FindAsync(id);
 
             if (khachHang == null)
@@ -85,28 +85,21 @@ namespace be_quanlytour.Controllers
         [HttpPost]
         public async Task<ActionResult<KhachHang>> PostKhachHang(KhachHang khachHang)
         {
-          if (_context.KhachHangs == null)
-          {
-              return Problem("Entity set 'QltourDuLichContext.KhachHangs'  is null.");
-          }
-            _context.KhachHangs.Add(khachHang);
+            if (_context.KhachHangs == null)
+            {
+                return Problem("Entity set 'QltourDuLichContext.KhachHangs'  is null.");
+            }
             try
             {
+                khachHang.MaKh = GenerateCustomerID();
+                _context.KhachHangs.Add(khachHang);
                 await _context.SaveChangesAsync();
+                return CreatedAtAction("GetKhachHang", new { id = khachHang.MaKh }, khachHang);
             }
-            catch (DbUpdateException)
+            catch (Exception ex)
             {
-                if (KhachHangExists(khachHang.MaKh))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return Problem($"Error creating KhachHang: {ex.Message}");
             }
-
-            return CreatedAtAction("GetKhachHang", new { id = khachHang.MaKh }, khachHang);
         }
 
         // DELETE: api/KhachHangs/5
@@ -132,6 +125,38 @@ namespace be_quanlytour.Controllers
         private bool KhachHangExists(string id)
         {
             return (_context.KhachHangs?.Any(e => e.MaKh == id)).GetValueOrDefault();
+        }
+        private string GenerateCustomerID()
+        {
+            const string chars = "0123456789";
+            Random random = new Random();
+            string id;
+            do
+            {
+                id = new string(Enumerable.Repeat(chars, 10)
+                  .Select(s => s[random.Next(s.Length)]).ToArray());
+            } while (KhachHangExists(id));
+
+            return id;
+        }
+        [HttpGet("checkEmail")]
+        public async Task<ActionResult<bool>> CheckEmailExists(string email)
+        {
+            var existingKhachHang = await _context.KhachHangs.FirstOrDefaultAsync(kh => kh.Email == email);
+            return existingKhachHang != null;
+        }
+        [HttpGet("checkPhoneNumber")]
+        public async Task<ActionResult<bool>> CheckPhoneNumberExists(string phoneNumber)
+        {
+            var existingKhachHang = await _context.KhachHangs.FirstOrDefaultAsync(kh => kh.SoDienThoaiKh == phoneNumber);
+            return existingKhachHang != null;
+        }
+
+        [HttpGet("GetKhachHangByEmail")]
+        public async Task<ActionResult<bool>> GetKhachHangByEmail(string email)
+        {
+            var infokh = await _context.KhachHangs.FirstOrDefaultAsync(kh => kh.Email == email);
+            return Ok(infokh) ;
         }
     }
 }

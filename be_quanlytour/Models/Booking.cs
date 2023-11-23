@@ -15,7 +15,7 @@ public partial class Booking
 
     public bool LoaiBooking { get; set; }
 
-    public string MaNv { get; set; } = null!;
+    public string? MaNv { get; set; }
 
     public string MaKh { get; set; } = null!;
 
@@ -27,7 +27,25 @@ public partial class Booking
 
     public virtual KhachHang MaKhNavigation { get; set; } = null!;
 
-    public virtual NhanVien MaNvNavigation { get; set; } = null!;
+    public virtual NhanVien? MaNvNavigation { get; set; }
 
     public virtual Voucher? MaVoucherNavigation { get; set; }
+}
+
+public partial class IBooking
+{
+
+    public DateTime ThoiDiemBook { get; set; }
+
+    public double GiaTri { get; set; }
+
+    public bool ThanhToan { get; set; }
+
+    public bool LoaiBooking { get; set; }
+
+    public string? MaNv { get; set; }
+
+    public string MaKh { get; set; } = null!;
+
+    public string? MaVoucher { get; set; }
 }
